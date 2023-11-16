@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: psql-db-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 512Mi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: psql-db
+  labels:
+    db_name: article-db
+spec:
+  containers:
+    - name: psql-container
+      image: postgres:latest
+      resources:
+        requests:
+          memory: "64Mi"
+          cpu: "250m"
+        limits:
+          memory: "512Mi"
+          cpu: "1"
+      ports:
+        - containerPort: 5432
+      env:
+        - name: POSTGRES_DB
+          value: article_db
+        - name: POSTGRES_USER
+          value: postgres
+        - name: POSTGRES_PASSWORD
+          value: secret
+      volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: psql-db-volume
+  volumes:
+    - name: psql-db-volume
+      persistentVolumeClaim:
+        claimName: psql-db-pvc
