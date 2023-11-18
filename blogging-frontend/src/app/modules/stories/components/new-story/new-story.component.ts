@@ -3,6 +3,8 @@ import {InsertCodeModel} from "../../model/insert-code.model";
 import {ArticleModel} from "../../model/article.model";
 import {PublishArticleService} from "../../../../services/publish-article.service";
 import {DomSanitizer} from "@angular/platform-browser";
+import {AttachmentService} from "../../../../services/AttachmentService";
+import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-new-story',
@@ -15,16 +17,33 @@ export class NewStoryComponent implements OnInit, AfterViewInit{
 
   summernote ?: any
 
+  articleTempId ?: string = ''
+
   constructor(
-    private publishArticleService: PublishArticleService
+    private attachmentService: AttachmentService
+    , private publishArticleService: PublishArticleService
     , private domSanitizer: DomSanitizer
   ) { }
 
   ngOnInit(): void {
   }
 
+  sendFile(file: any, summernoteElement: any) {
+    var form_data = new FormData()
+    form_data.append('file', file)
+    // @ts-ignore
+    form_data.append('articleTempId', this.articleTempId)
+    this.attachmentService.saveAttachmentAndReturnUrl(form_data).subscribe(value => {
+      // @ts-ignore
+      $(summernoteElement).summernote('editor.insertImage', url)
+    }, error => {
+      console.log(error)
+    })
+  }
+
   ngAfterViewInit(): void {
     let $this = this;
+    $this.articleTempId = uuidv4()
     // @ts-ignore
     let insertCode = function (context) {
       // @ts-ignore
@@ -118,15 +137,12 @@ export class NewStoryComponent implements OnInit, AfterViewInit{
 
       callbacks: {
         onImageUpload: function (files: any) {
-          console.log(files)
-          let url = URL.createObjectURL(files[0])
-          let image = new Image();
-          image.src = url;
-          let fileUniqueName = files[0].lastModified + '_' + files[0].name;
-          console.log(fileUniqueName)
-          // tempFiles.push(fileUniqueName)
+
+          for (let i = 0; i <= files.length - 1; i++) {
+            $this.sendFile(files[i], this)
+          }
           // @ts-ignore
-          $('.summernote').summernote ("insertImage", url);
+          // $('.summernote').summernote ("insertImage", url);
         },
       }
     });
