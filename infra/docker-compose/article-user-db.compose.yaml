@@ -16,7 +16,7 @@ services:
     networks:
       - article_app_netwok
     extra_hosts:
-      - 'article_app_netwok:192.168.238.5'
+      - 'article_app_netwok:192.168.1.114'
 volumes:
   article_user_bs_volume:
 networks:
