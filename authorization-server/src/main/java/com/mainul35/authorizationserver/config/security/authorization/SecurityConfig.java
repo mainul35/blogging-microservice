@@ -1,5 +1,6 @@
-package com.mainul35.authorizationserver.config.security;
+package com.mainul35.authorizationserver.config.security.authorization;
 
+import com.mainul35.authorizationserver.config.security.fedarated.FederatedIdentityAuthenticationSuccessHandler;
 import com.mainul35.authorizationserver.service.ClientService;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -15,15 +16,23 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationConsentService;
+import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -49,7 +58,7 @@ public class SecurityConfig {
         http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
                 .oidc(Customizer.withDefaults());
         http.exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login")))
+                        .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/auth/login")))
                 .oauth2ResourceServer(httpSecurityOAuth2ResourceServerConfigurer ->
                         httpSecurityOAuth2ResourceServerConfigurer.jwt(Customizer.withDefaults()));
         return http.build();
@@ -58,12 +67,58 @@ public class SecurityConfig {
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE + 1)
     public SecurityFilterChain webSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/client/**").permitAll()
-                        .anyRequest().authenticated())
-                .formLogin(Customizer.withDefaults());
-        http.csrf(csrf -> csrf.ignoringRequestMatchers("/auth/**", "/client/**"));
+//        http.authorizeHttpRequests(auth -> auth
+//                        .requestMatchers("/auth/**", "/client/**").permitAll()
+//                        .anyRequest().authenticated())
+//                .formLogin(Customizer.withDefaults());
+//        http.csrf(csrf -> csrf.ignoringRequestMatchers("/auth/**", "/client/**"));
+//        return http.build();
+
+        http
+                .authorizeHttpRequests(authorize ->
+                        authorize
+                                .requestMatchers(
+                                        "/assets/**",
+                                        "/lib/bootstrap/**",
+                                        "/login",
+                                        "/css/**",
+                                        "/js/**",
+                                        "/images/**",
+                                        "/auth/**",
+                                        "/client/**"
+                                ).permitAll()
+                                .anyRequest().authenticated()
+                )
+                .formLogin(formLogin ->
+                        formLogin
+                                .loginPage("/auth/login")
+                                .loginProcessingUrl("/login-processing")
+                                .usernameParameter("username")
+                                .passwordParameter("password")
+                                .successHandler(authenticationSuccessHandler())
+                )
+//                .formLogin(Customizer.withDefaults())
+                .oauth2Login(oauth2Login ->
+                        oauth2Login
+                                .loginPage("/auth/login")
+                                .successHandler(authenticationSuccessHandler())
+                );
+
+        http.csrf(csrf -> csrf.ignoringRequestMatchers(
+                "/assets/**",
+                "/lib/bootstrap/**",
+                "/login",
+                "/css/**",
+                "/js/**",
+                "/images/**",
+                "/auth/**",
+                "/client/**"));
+
         return http.build();
+    }
+
+    private AuthenticationSuccessHandler authenticationSuccessHandler() {
+        return new FederatedIdentityAuthenticationSuccessHandler();
     }
 
 //    @Bean
@@ -86,6 +141,17 @@ public class SecurityConfig {
 //    public ClientSettings clientSettings(){
 //        return ClientSettings.builder().requireAuthorizationConsent(true).requireProofKey(true).build();
 //    }
+
+    @Bean
+    public OAuth2AuthorizationService authorizationService() {
+        return new InMemoryOAuth2AuthorizationService();
+    }
+
+    @Bean
+    public OAuth2AuthorizationConsentService authorizationConsentService() {
+        // Will be used by the ConsentController
+        return new InMemoryOAuth2AuthorizationConsentService();
+    }
 
     @Bean
     public OAuth2TokenCustomizer<JwtEncodingContext> tokenCustomizer () {
@@ -139,5 +205,15 @@ public class SecurityConfig {
             throw new RuntimeException(e.getMessage());
         }
         return keyPair;
+    }
+
+    @Bean
+    public SessionRegistry sessionRegistry() {
+        return new SessionRegistryImpl();
+    }
+
+    @Bean
+    public HttpSessionEventPublisher httpSessionEventPublisher() {
+        return new HttpSessionEventPublisher();
     }
 }
