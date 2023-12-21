@@ -67,20 +67,12 @@ public class SecurityConfig {
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE + 1)
     public SecurityFilterChain webSecurityFilterChain(HttpSecurity http) throws Exception {
-//        http.authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/auth/**", "/client/**").permitAll()
-//                        .anyRequest().authenticated())
-//                .formLogin(Customizer.withDefaults());
-//        http.csrf(csrf -> csrf.ignoringRequestMatchers("/auth/**", "/client/**"));
-//        return http.build();
-
         http
                 .authorizeHttpRequests(authorize ->
                         authorize
                                 .requestMatchers(
                                         "/assets/**",
                                         "/lib/bootstrap/**",
-                                        "/login",
                                         "/css/**",
                                         "/js/**",
                                         "/images/**",
@@ -97,7 +89,6 @@ public class SecurityConfig {
                                 .passwordParameter("password")
                                 .successHandler(authenticationSuccessHandler())
                 )
-//                .formLogin(Customizer.withDefaults())
                 .oauth2Login(oauth2Login ->
                         oauth2Login
                                 .loginPage("/auth/login")
@@ -107,7 +98,6 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.ignoringRequestMatchers(
                 "/assets/**",
                 "/lib/bootstrap/**",
-                "/login",
                 "/css/**",
                 "/js/**",
                 "/images/**",
