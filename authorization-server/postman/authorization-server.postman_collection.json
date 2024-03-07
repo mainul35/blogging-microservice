@@ -1,0 +1,209 @@
+{
+	"info": {
+		"_postman_id": "756e2567-63be-4bb2-8be7-d29483b4d8c3",
+		"name": "authorization-server",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "710567"
+	},
+	"item": [
+		{
+			"name": "localhost",
+			"item": [
+				{
+					"name": "/auth/create-user",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "secret",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "client",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"mainul35\",\r\n  \"password\": \"secret\",\r\n  \"roles\": [\r\n    \"ROLE_USER\"\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/auth/create-user",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"auth",
+								"create-user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/oauth2/token",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "secret",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "client",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "authorization_code",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "client",
+									"type": "text"
+								},
+								{
+									"key": "redirect_uri",
+									"value": "https://oauthdebugger.com/debug",
+									"type": "text"
+								},
+								{
+									"key": "code_verifier",
+									"value": "dtQ29X2OdNeuiNLyI8lujferalpRIesfUPuxOVsJTeR",
+									"type": "text"
+								},
+								{
+									"key": "code",
+									"value": "gVXqWcYeRy902Iich13V2LL2ABnSV7E6m7hfuAbKrURy1zOJpF7fCP96JZaibcAuWK2McQHZwG7kyV3HCw7xpHc5tHmGMh8J4MLekb0r1qR_GwOifq2cjF5YykiW3esX",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:9000/oauth2/token",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"oauth2",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/client/create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"clientId\": \"client\",\r\n    \"clientSecret\": \"secret\",\r\n    \"clientAuthenticationMethods\": [\"client_secret_basic\"],\r\n    \"authorizationGrantTypes\": [\r\n        \"authorization_code\",\r\n        \"refresh_token\",\r\n        \"client_credentials\"\r\n    ],\r\n    \"redirectUris\": [\r\n        \"https://oauthdebugger.com/debug\"\r\n    ],\r\n    \"scopes\": [\"openid\"],\r\n    \"requireProofKey\": true,\r\n    \"requireAuthorizationConsent\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:9000/client/create",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"client",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "initialize",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:9000/auth/initialize?key=n1POc4Ns79wa93l1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"auth",
+								"initialize"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "n1POc4Ns79wa93l1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJraWQiOiIyNTlmZGMzYS1mYmJkLTQ1YmYtYWU2ZS1mODdjOTRmMTM2YTIiLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIxMTY2NTUzMDUxNTk2MjM5MDUyMTIiLCJhdWQiOiJjbGllbnQiLCJuYmYiOjE3MDczNzI2NTQsInNjb3BlIjpbIm9wZW5pZCJdLCJyb2xlcyI6WyJPSURDX1VTRVIiLCJTQ09QRV9vcGVuaWQiLCJTQ09QRV9odHRwczovL3d3dy5nb29nbGVhcGlzLmNvbS9hdXRoL3VzZXJpbmZvLnByb2ZpbGUiLCJTQ09QRV9odHRwczovL3d3dy5nb29nbGVhcGlzLmNvbS9hdXRoL3VzZXJpbmZvLmVtYWlsIl0sImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6OTAwMCIsImV4cCI6MTcwNzM3Mjk1NCwidG9rZW5fdHlwZSI6ImFjY2VzcyB0b2tlbiIsImlhdCI6MTcwNzM3MjY1NCwidXNlcm5hbWUiOiIxMTY2NTUzMDUxNTk2MjM5MDUyMTIifQ.gGesyw0D-HW9fjG68WvTshP4HBgNRG8-kdwZnmnK3z6cfE_7Pbi40PfbfO7cjry3QH91xzxRjhqQJZBrCvmpG1vGa6o7XO6bXHJZcGxjBQMMZlVwotBICQNHk7VwhjDIWHFZFa5T-EOnzmR_4qXpOoi8E1D_GuSxxd2bWKMQ8-Vsydtt13j2kZBThIP6AqPaHjP8Vqrtd_mdLAHT-GP9whMyM4AO3_pQyIYGUB-7F9OeFJTPaYwxr9MXykJ4JlxcPROAbHwLktfG7N6mRgp_lKu8jbjKU7JutPm-3ng34MndpGe1BQgEj1_4t1vzwlpRvJPB6jBaZzYlmaBGcdlGhQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8090/test/user",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8090",
+							"path": [
+								"test",
+								"user"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
