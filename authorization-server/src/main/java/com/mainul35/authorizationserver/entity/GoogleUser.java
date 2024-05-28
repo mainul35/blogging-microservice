@@ -36,4 +36,16 @@ public class GoogleUser {
                 .build();
         return googleUser;
     }
+
+    @Override
+    public String toString() {
+        return "GoogleUser{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", givenName='" + givenName + '\'' +
+                ", familyName='" + familyName + '\'' +
+                ", photoUrl='" + photoUrl + '\'' +
+                '}';
+    }
 }

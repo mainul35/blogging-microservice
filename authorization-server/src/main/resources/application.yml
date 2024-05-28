@@ -39,3 +39,10 @@ server:
 
 init:
   key: n1POc4Ns79wa93l1
+
+#  spring.security.oauth2.client.registration.google-idp.provider=google
+#  spring.security.oauth2.client.registration.google-idp.client-id=${GOOGLE_CLIENT_ID:your_client_id}
+#  spring.security.oauth2.client.registration.google-idp.client-secret=${GOOGLE_CLIENT_SECRET:your_client_secret}
+#  spring.security.oauth2.client.registration.google-idp.scope=openid, https://www.googleapis.com/auth/userinfo.profile, https://www.googleapis.com/auth/userinfo.email
+#  spring.security.oauth2.client.registration.google-idp.client-name=oauth2-tutorial-client
+#  spring.security.oauth2.client.provider.google.user-name-attribute=email
