@@ -12,6 +12,6 @@ export class UserService {
   constructor(private httpClient: HttpClient) { }
 
   public addUser(user: UserModel) : Observable<any> {
-    return this.httpClient.post(`${environment.BASE_URL}users/add`, user);
+    return this.httpClient.post(`${environment.RESOURCE_URL}users/add`, user);
   }
 }

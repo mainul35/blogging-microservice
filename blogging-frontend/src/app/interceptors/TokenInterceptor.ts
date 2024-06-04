@@ -1,4 +1,4 @@
-import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
+import {HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest} from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import {AppConstants} from "../AppConstants";
@@ -22,17 +22,24 @@ export class TokenInterceptor implements HttpInterceptor {
       }
     })
 
-    const userInfoStr = localStorage.getItem(AppConstants.ACCESS_TOKEN);
-    // @ts-ignore
-    const userInfo = JSON.parse(userInfoStr);
-    const jwt = userInfo.jwtToken;
+    // const userInfoStr = localStorage.getItem(AppConstants.ACCESS_TOKEN);
+    // // @ts-ignore
+    // const userInfo = JSON.parse(userInfoStr);
+    // const jwt = userInfo.jwtToken;
 
     // request.headers['headers'] = [{"Authorization": `Bearer ${jwt}`}]
 
     request = request.clone({
-      setHeaders: {'authorization': 'Bearer '+jwt}
+      setHeaders: {'Authorization': 'Bearer '+localStorage.getItem(AppConstants.ACCESS_TOKEN)}
     });
 
+    // const headers = new HttpHeaders({
+    //   'Authorization': 'Bearer '+localStorage.getItem(AppConstants.ACCESS_TOKEN),
+    //   'Content-Type': 'application/json'
+    // });
+    //
+    // const cloneReq = request.clone({ headers });
+    // debugger
     return next.handle(request);
   }
 }

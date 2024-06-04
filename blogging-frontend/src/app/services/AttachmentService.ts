@@ -15,6 +15,6 @@ export class AttachmentService {
   ) { }
 
   public saveAttachmentAndReturnUrl(formData: FormData) : Observable<any> {
-    return this.httpClient.post(`${environment.BASE_URL}attachments/upload`, formData);
+    return this.httpClient.post(`${environment.RESOURCE_URL}attachments-upload`, formData);
   }
 }

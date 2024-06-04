@@ -1,9 +1,15 @@
-<body *ngIf="access_token"  class="hold-transition layout-top-nav">
-<div class="wrapper grayed-background">
-  <app-navbar></app-navbar>
-  <app-content-wrapper></app-content-wrapper>
-</div>
-</body>
-<div *ngIf="!access_token">
-  <app-login></app-login>
-</div>
+<!-- TODO: To activate later -->
+<!--<body *ngIf="access_token"  class="hold-transition layout-top-nav">-->
+<!--<div class="wrapper grayed-background">-->
+<!--  <app-navbar></app-navbar>-->
+<!--  <app-content-wrapper></app-content-wrapper>-->
+<!--</div>-->
+<!--</body>-->
+<!--<div *ngIf="!access_token">-->
+<!--  <app-login></app-login>-->
+<!--</div>-->
+
+
+<!-- TODO: To comment later -->
+<app-menu></app-menu>
+<router-outlet></router-outlet>
