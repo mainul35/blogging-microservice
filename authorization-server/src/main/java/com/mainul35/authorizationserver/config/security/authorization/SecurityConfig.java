@@ -58,6 +58,7 @@ public class SecurityConfig {
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public SecurityFilterChain authSecurityFilterChain(HttpSecurity http) throws Exception {
+        http.cors(Customizer.withDefaults());
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
         http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
                 .oidc(Customizer.withDefaults());
@@ -71,6 +72,7 @@ public class SecurityConfig {
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE + 1)
     public SecurityFilterChain webSecurityFilterChain(HttpSecurity http) throws Exception {
+        http.cors(Customizer.withDefaults());
         FederatedIdentityConfigurer federatedIdentityConfigurer = new FederatedIdentityConfigurer()
                 .oauth2UserHandler(new UserRepositoryOAuth2UserHandler(googleUserRepository));
         http

@@ -15,7 +15,9 @@ export const environment = {
   response_mode: "form_post",
   code_challenge_method: "S256",
   code_challenge: "D31JLsveEKURXL8x-yvTocCufiwNAScTN5kEsYwDQWI",
-  code_verifier: "g4qE6ENmlEHpUxNIv0XrE57LfLjgqG28BRke4XLq6AR"
+  code_verifier: "g4qE6ENmlEHpUxNIv0XrE57LfLjgqG28BRke4XLq6AR",
+  token_url: 'http://localhost:9000/oauth2/token',
+  grant_type: "authorization_code"
 
 };
 
