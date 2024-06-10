@@ -1,6 +1,9 @@
 package com.mainul35.authorizationserver.config.security.authorization;
 
 import com.mainul35.authorizationserver.config.security.fedarated.FederatedIdentityAuthenticationSuccessHandler;
+import com.mainul35.authorizationserver.config.security.fedarated.FederatedIdentityConfigurer;
+import com.mainul35.authorizationserver.config.security.fedarated.UserRepositoryOAuth2UserHandler;
+import com.mainul35.authorizationserver.repository.GoogleUserRepository;
 import com.mainul35.authorizationserver.service.ClientService;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -50,10 +53,12 @@ public class SecurityConfig {
 
     private final PasswordEncoder passwordEncoder;
     private final ClientService clientService;
+    private final GoogleUserRepository googleUserRepository;
 
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public SecurityFilterChain authSecurityFilterChain(HttpSecurity http) throws Exception {
+        http.cors(Customizer.withDefaults());
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
         http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
                 .oidc(Customizer.withDefaults());
@@ -67,6 +72,9 @@ public class SecurityConfig {
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE + 1)
     public SecurityFilterChain webSecurityFilterChain(HttpSecurity http) throws Exception {
+        http.cors(Customizer.withDefaults());
+        FederatedIdentityConfigurer federatedIdentityConfigurer = new FederatedIdentityConfigurer()
+                .oauth2UserHandler(new UserRepositoryOAuth2UserHandler(googleUserRepository));
         http
                 .authorizeHttpRequests(authorize ->
                         authorize
@@ -93,7 +101,7 @@ public class SecurityConfig {
                         oauth2Login
                                 .loginPage("/auth/login")
                                 .successHandler(authenticationSuccessHandler())
-                );
+                ).apply(federatedIdentityConfigurer);
 
         http.csrf(csrf -> csrf.ignoringRequestMatchers(
                 "/assets/**",
