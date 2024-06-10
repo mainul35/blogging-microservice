@@ -2,6 +2,7 @@ package com.mainul35.authorizationserver.config.security.fedarated;
 
 // tag::imports[]
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
@@ -28,10 +29,14 @@ public final class UserRepositoryOAuth2UserHandler implements Consumer<OAuth2Use
     @Override
     public void accept(OAuth2User user) {
         // Capture user in a local data store on first authentication
-        if (this.googleUserRepository.findByEmail(user.getName()).isPresent()) {
-            GoogleUser googleUser = GoogleUser.fromOauth2User(user);
-            log.info("Saving first-time user: name=" + user.getName() + ", claims=" + user.getAttributes() + ", authorities=" + user.getAuthorities());
-            this.googleUserRepository.save(googleUser);
+        if (user.getAttribute("iss").toString().contains("google") && Objects.nonNull(user.getAttribute("email"))) {
+            if (!this.googleUserRepository.findByEmail(user.getAttribute("email")).isPresent()) {
+                GoogleUser googleUser = GoogleUser.fromOauth2User(user);
+                log.info("Saving first-time user: name=" + user.getName() + ", claims=" + user.getAttributes() + ", authorities=" + user.getAuthorities());
+                this.googleUserRepository.save(googleUser);
+            } else {
+                this.googleUserRepository.findByEmail(user.getAttribute("email"));
+            }
         } else {
             log.error("Couldn't find google user");
         }
