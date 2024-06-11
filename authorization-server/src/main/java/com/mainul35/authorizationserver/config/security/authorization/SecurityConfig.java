@@ -22,6 +22,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationService;
@@ -42,6 +43,8 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.time.Instant;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -162,7 +165,14 @@ public class SecurityConfig {
             if (context.getTokenType().getValue().equals("access_token")) {
                 context.getClaims().claim("token_type", "access token");
                 Set<String> roles = principal.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
-                context.getClaims().claim("roles", roles).claim("username", principal.getName());
+                if (roles.contains("OIDC_USER")) {
+                    roles.add("ROLE_USER");
+                }
+//                long sixHrs = 3600;
+//                context.getClaims().expiresAt(Instant.ofEpochSecond(sixHrs));
+                context.getClaims()
+                        .claim("roles", roles)
+                        .claim("username", Objects.requireNonNull(((OAuth2User) principal.getPrincipal()).getAttribute("email")));
             }
         };
     }
