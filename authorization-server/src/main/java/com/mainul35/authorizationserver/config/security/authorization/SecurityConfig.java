@@ -43,6 +43,7 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.Set;
@@ -168,8 +169,7 @@ public class SecurityConfig {
                 if (roles.contains("OIDC_USER")) {
                     roles.add("ROLE_USER");
                 }
-//                long sixHrs = 3600;
-//                context.getClaims().expiresAt(Instant.ofEpochSecond(sixHrs));
+                context.getClaims().expiresAt(Instant.now().plus(Duration.ofHours(3)));
                 context.getClaims()
                         .claim("roles", roles)
                         .claim("username", Objects.requireNonNull(((OAuth2User) principal.getPrincipal()).getAttribute("email")));
