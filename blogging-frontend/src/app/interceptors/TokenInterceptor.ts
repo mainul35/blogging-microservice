@@ -1,12 +1,15 @@
-import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/common/http";
+import {HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest} from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import {AppConstants} from "../AppConstants";
+import {TokenService} from "../services/token.service";
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
 
-  constructor() {}
+  constructor(
+    private tokenService: TokenService
+  ) {}
 
   allowedPaths: string[] = [
     'login',
@@ -15,24 +18,11 @@ export class TokenInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
-    // @ts-ignore
-    this.allowedPaths.forEach(path => {
-      if (request.url.includes(path)) {
-        return next.handle(request);
-      }
-    })
-
-    const userInfoStr = localStorage.getItem(AppConstants.ACCESS_TOKEN);
-    // @ts-ignore
-    const userInfo = JSON.parse(userInfoStr);
-    const jwt = userInfo.jwtToken;
-
-    // request.headers['headers'] = [{"Authorization": `Bearer ${jwt}`}]
-
-    request = request.clone({
-      setHeaders: {'authorization': 'Bearer '+jwt}
-    });
-
+    let intReq = request;
+    const token = this.tokenService.getAccessToken();
+    if (token != null && request.url.includes('api/v1')) {
+      intReq = request.clone({headers: request.headers.set('Authorization', 'Bearer ' + token)})
+    }
     return next.handle(request);
   }
 }

@@ -28,11 +28,11 @@ public class GoogleUser {
 
     public static GoogleUser fromOauth2User (OAuth2User oAuth2User) {
         GoogleUser googleUser = GoogleUser.builder()
-                .email(oAuth2User.getName())
+                .email(oAuth2User.getAttribute("email"))
                 .name(oAuth2User.getAttribute("name"))
                 .givenName(oAuth2User.getAttribute("given_name"))
                 .familyName(oAuth2User.getAttribute("family_name"))
-                .photoUrl(oAuth2User.getAttribute("photo"))
+                .photoUrl(oAuth2User.getAttribute("picture"))
                 .build();
         return googleUser;
     }

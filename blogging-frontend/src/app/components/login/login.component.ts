@@ -7,11 +7,16 @@ import {environment} from "../../../environments/environment";
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
+  email: any;
+  password: any;
 
   constructor() { }
 
   ngOnInit(): void {
-    location.href = `${environment.AUTH_URL}login`
+
   }
 
+  onSubmit() {
+    
+  }
 }

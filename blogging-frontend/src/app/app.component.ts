@@ -18,28 +18,29 @@ export class AppComponent implements OnInit {
     let params = new URLSearchParams( window.location.search);
     // @ts-ignore
     this.access_token = params.get(AppConstants.ACCESS_TOKEN)  ? params.get(AppConstants.ACCESS_TOKEN) : localStorage.getItem(AppConstants.ACCESS_TOKEN);
-    if (!this.access_token) {
-      location.href = environment.AUTH_URL + 'login';
-    } else {
-      // @ts-ignore
-      localStorage.setItem(AppConstants.ACCESS_TOKEN, this.access_token);
-      if (params.get('name')) {
-        // @ts-ignore
-        localStorage.setItem('name', params.get('name'));
-      }
-      if (params.get('username')) {
-        // @ts-ignore
-        localStorage.setItem('username', params.get('username'));
-      }
-
-      if (params.get('image_url')) {
-        // @ts-ignore
-        localStorage.setItem('image_url', params.get('image_url'));
-      }
-
-      if (location.pathname === '/') {
-        this.router.navigateByUrl('/stories')
-      }
-    }
+    // if (!this.access_token) {
+    //   // console.error("No access token found")
+    //   this.router.navigateByUrl('/home')
+    // } else {
+    //   // @ts-ignore
+    //   localStorage.setItem(AppConstants.ACCESS_TOKEN, this.access_token);
+    //   if (params.get('name')) {
+    //     // @ts-ignore
+    //     localStorage.setItem('name', params.get('name'));
+    //   }
+    //   if (params.get('username')) {
+    //     // @ts-ignore
+    //     localStorage.setItem('username', params.get('username'));
+    //   }
+    //
+    //   if (params.get('image_url')) {
+    //     // @ts-ignore
+    //     localStorage.setItem('image_url', params.get('image_url'));
+    //   }
+    //
+    //   if (location.pathname === '/') {
+    //     this.router.navigateByUrl('/stories')
+    //   }
+    // }
   }
 }

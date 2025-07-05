@@ -15,7 +15,7 @@
         <li class="nav-item">
           <a [routerLink]="['/stories']" class="nav-link">Stories</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" *ngIf="isLoggedIn">
           <a [routerLink]="['/stories/new']" class="nav-link">New</a>
         </li>
 
@@ -123,8 +123,8 @@
       </li>
       <li class="nav-item dropdown">
         <a id="dropdownSubMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">
-          Hello, {{name ? name : 'User'}}
-          <img style="width: 30px; height: 30px; border-radius: 8px" src="{{imageUrl ? imageUrl : 'https://banner2.cleanpng.com/20180408/tvw/kisspng-user-computer-icons-gravatar-blog-happy-woman-5aca6d03e6c3f5.6041125615232156199452.jpg'}}"/>
+          Hello {{isLoggedIn ? ', ' + name : ''}}
+          <img style="width: 30px; height: 30px; border-radius: 8px" src="{{ isLoggedIn ? imageUrl : 'https://banner2.cleanpng.com/20180408/tvw/kisspng-user-computer-icons-gravatar-blog-happy-woman-5aca6d03e6c3f5.6041125615232156199452.jpg'}}"/>
         </a>
         <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow" style="left: 25px; right: inherit;">
           <li><a href="file:///C:/Users/YOGA/Downloads/AdminLTE-3.2.0/AdminLTE-3.2.0/pages/layout/top-nav.html#" class="dropdown-item">Some action </a></li>
@@ -133,8 +133,11 @@
           <li class="dropdown-divider"></li>
 
           <!-- Level two dropdown-->
-          <li>
+          <li *ngIf="isLoggedIn">
             <span class="dropdown-item" (click)="logout()">Logout</span>
+          </li>
+          <li *ngIf="!isLoggedIn">
+            <span class="dropdown-item" (click)="login()">Login</span>
           </li>
           <!-- End Level two -->
         </ul>

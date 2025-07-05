@@ -1,16 +1,15 @@
 package com.mainul35.authorizationserver.config.security.fedarated;
 
+import com.mainul35.authorizationserver.config.security.SavedRequestAwareAuthenticationSuccessHandler;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
 import java.io.IOException;
 import java.util.function.Consumer;
@@ -43,7 +42,7 @@ public final class FederatedIdentityAuthenticationSuccessHandler implements Auth
                 this.oauth2UserHandler.accept((OAuth2User)authentication.getPrincipal());
             }
         }
-
+        // Delegate to the default success handler
         this.delegate.onAuthenticationSuccess(request, response, authentication);
     }
 

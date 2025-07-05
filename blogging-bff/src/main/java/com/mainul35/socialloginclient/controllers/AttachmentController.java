@@ -7,14 +7,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @CrossOrigin("http://localhost:4200/")
-@RequestMapping("/attachments")
+@RequestMapping("/api/v1")
 public class AttachmentController {
 
-    @PostMapping("/upload")
+    @PostMapping("/attachments-upload")
     @PreAuthorize("hasAnyAuthority('ROLE_USER', 'OIDC_USER')")
     public ResponseEntity<String> saveAttachmentAndReturnUrl (@RequestParam(value="file") MultipartFile file, @RequestParam(value="articleTempId") String articleTempId) {
         System.out.println(articleTempId);
         return ResponseEntity.ok("");
     }
-
 }
