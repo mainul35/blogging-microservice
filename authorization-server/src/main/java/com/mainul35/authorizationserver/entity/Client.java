@@ -13,6 +13,7 @@ import org.springframework.security.oauth2.server.authorization.settings.ClientS
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @AllArgsConstructor
@@ -28,9 +29,11 @@ public class Client {
     private String clientId;
     private String clientSecret;
     @ElementCollection(fetch = FetchType.EAGER)
-    private Set<ClientAuthenticationMethod> clientAuthenticationMethods;
+    @Column(name = "client_authentication_methods", columnDefinition = "text")
+    private Set<String> clientAuthenticationMethods;
     @ElementCollection(fetch = FetchType.EAGER)
-    private Set<AuthorizationGrantType> authorizationGrantTypes;
+    @Column(name = "client_authentication_methods", columnDefinition = "text")
+    private Set<String> authorizationGrantTypes;
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> redirectUris;
     @ElementCollection(fetch = FetchType.EAGER)
@@ -43,8 +46,8 @@ public class Client {
                 .clientId(client.getClientId())
                 .clientSecret(client.getClientSecret())
                 .clientIdIssuedAt(LocalDateTime.now().toInstant(ZoneOffset.UTC))
-                .clientAuthenticationMethods(m -> m.addAll(client.getClientAuthenticationMethods()))
-                .authorizationGrantTypes(agt -> agt.addAll(client.getAuthorizationGrantTypes()))
+                .clientAuthenticationMethods(m -> m.addAll(client.getClientAuthenticationMethods().stream().map(ClientAuthenticationMethod::valueOf).collect(Collectors.toSet())))
+                .authorizationGrantTypes(agt -> agt.addAll(client.getAuthorizationGrantTypes().stream().map(AuthorizationGrantType::new).collect(Collectors.toSet())))
                 .redirectUris(ru -> ru.addAll(client.getRedirectUris()))
                 .scopes(s -> s.addAll(client.getScopes()))
                 .clientSettings(

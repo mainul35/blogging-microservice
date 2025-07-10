@@ -15,8 +15,8 @@ import java.util.Set;
 public class CreateClientDto {
     private String clientId;
     private String clientSecret;
-    private Set<ClientAuthenticationMethod> clientAuthenticationMethods;
-    private Set<AuthorizationGrantType> authorizationGrantTypes;
+    private Set<String> clientAuthenticationMethods;
+    private Set<String> authorizationGrantTypes;
     private Set<String> redirectUris;
     private Set<String> scopes;
     private Boolean requireProofKey;

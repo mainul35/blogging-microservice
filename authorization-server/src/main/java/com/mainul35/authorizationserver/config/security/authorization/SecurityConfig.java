@@ -20,6 +20,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.session.SessionRegistry;
@@ -40,6 +42,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -73,7 +76,14 @@ public class SecurityConfig {
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public SecurityFilterChain authSecurityFilterChain(HttpSecurity http) throws Exception {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
-        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
+
+        OAuth2AuthorizationServerConfigurer authorizationServerConfigurer = new OAuth2AuthorizationServerConfigurer();
+        RequestMatcher endpointsMatcher = authorizationServerConfigurer.getEndpointsMatcher();
+        http.securityMatcher(endpointsMatcher)
+                .authorizeHttpRequests((authorize) -> ((AuthorizeHttpRequestsConfigurer.AuthorizedUrl)authorize.anyRequest()).authenticated())
+                .csrf((csrf) -> csrf.ignoringRequestMatchers(new RequestMatcher[]{endpointsMatcher}))
+                .with(authorizationServerConfigurer, Customizer.withDefaults());
+
         http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
                 .oidc(Customizer.withDefaults());
         http.exceptionHandling(exception -> exception
@@ -99,7 +109,9 @@ public class SecurityConfig {
                                         "/css/**",
                                         "/js/**",
                                         "/images/**",
+                                        "/auth",
                                         "/auth/**",
+                                        "/client",
                                         "/client/**"
                                 ).permitAll()
                                 .anyRequest().authenticated()
@@ -116,7 +128,7 @@ public class SecurityConfig {
                         oauth2Login
                                 .loginPage("/auth/login")
                                 .successHandler(authenticationSuccessHandler())
-                ).apply(federatedIdentityConfigurer);
+                ).with(federatedIdentityConfigurer, Customizer.withDefaults());
 
         http.csrf(csrf -> csrf.ignoringRequestMatchers(
                 "/assets/**",
