@@ -9,7 +9,7 @@ import axios from "axios";
 const environment = {
   authorize_uri: "http://localhost:9000/oauth2/authorize?",
   client_id: "client1",
-  redirect_uri: "http://127.0.0.1:5174/authorized",
+  redirect_uri: "http://127.0.0.1:5173/authorized",
   scope: "openid",
   response_type: "code",
   response_mode: "form_post",

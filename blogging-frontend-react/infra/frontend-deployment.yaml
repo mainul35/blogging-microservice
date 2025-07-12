@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vite-auth-app-deployment
+  labels:
+    app: vite-auth-app-frontend
+spec:
+  replicas: 2 # Start with 1 for testing, increase for production
+  selector:
+    matchLabels:
+      app: vite-auth-app-frontend
+  template:
+    metadata:
+      labels:
+        app: vite-auth-app-frontend
+    spec:
+      containers:
+        - name: vite-auth-app-container
+          image: syedmainulhasan018/vite-auth-app:latest # Your image
+          imagePullPolicy: Always # Ensures Kubernetes always pulls the latest image
+          ports:
+            - containerPort: 80 # Nginx inside your Docker image listens on port 80
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "128Mi"
+              cpu: "200m"

@@ -1,0 +1,52 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: vite-auth-app-ingress
+  annotations:
+  # --- Recommended Nginx Ingress Controller Annotations ---
+  # Redirect HTTP to HTTPS (requires TLS/cert-manager setup below)
+  # nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  # Set a larger client body size for file uploads, if needed
+  # nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+  # Enable CORS (adjust as needed if your Spring Boot app doesn't handle it fully)
+  # nginx.ingress.kubernetes.io/enable-cors: "true"
+  # nginx.ingress.kubernetes.io/cors-allow-origin: "https://myauthapp.example.com"
+  # nginx.ingress.kubernetes.io/cors-allow-methods: "GET, PUT, POST, DELETE, OPTIONS"
+  # nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization"
+
+  # --- Cert-Manager Integration (for automatic HTTPS) ---
+  # If you have cert-manager installed and a ClusterIssuer configured:
+  # cert-manager.io/cluster-issuer: letsencrypt-prod # Or 'letsencrypt-staging' for testing
+  labels:
+    app: vite-auth-app
+spec:
+  # --- TLS Configuration (for HTTPS) ---
+  # Uncomment and configure this section if you want HTTPS.
+  # This typically requires cert-manager to be installed in your cluster.
+  # tls:
+  # - hosts:
+  #   - myauthapp.example.com # Your domain
+  #   secretName: myauthapp-tls # Cert-manager will store the certificate here
+
+  rules:
+    - host: myauthapp.example.com # <<< REPLACE THIS WITH YOUR ACTUAL DOMAIN
+      http:
+        paths:
+          # Rule for your Vite React Frontend
+          - path: /
+            pathType: Prefix # Or Exact. Prefix is common for SPAs.
+            backend:
+              service:
+                name: vite-auth-app-frontend-service # Name of your frontend Service
+                port:
+                  number: 80 # Port of your frontend Service
+
+          # Rule for your Spring Boot Backend API
+          # All requests to myauthapp.example.com/api/* will go to the Spring Boot backend
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: spring-boot-api-service # Name of your backend Service
+                port:
+                  number: 8080 # Port of your backend Service

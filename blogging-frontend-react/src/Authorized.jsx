@@ -22,7 +22,7 @@ function Authorized() {
   const getToken = async (code) => {
     const tokenUri = "http://localhost:9000/oauth2/token";
     const clientId = "client1";
-    const redirectUri = "http://127.0.0.1:5174/authorized";
+    const redirectUri = "http://127.0.0.1:5173/authorized";
     const codeVerifier = "g4qE6ENmlEHpUxNIv0XrE57LfLjgqG28BRke4XLq6AR"; //REMOVE IF NOT USING PKCE
     const clientSecret = "secret"; // NEVER STORE SECRETS IN CLIENT-SIDE CODE!
 
